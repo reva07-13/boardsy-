@@ -1,0 +1,3727 @@
+/* =========================================================
+   BOARDSY
+   PCB INTEGRITY INSPECTION SYSTEM
+   PREMIUM UI
+   ========================================================= */
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
+
+:root {
+    --bg: #010708;
+
+    --panel: rgba(3, 16, 18, 0.62);
+    --panel-light: rgba(8, 28, 30, 0.58);
+
+    --border: rgba(58, 229, 199, 0.20);
+    --border-bright: rgba(58, 229, 199, 0.40);
+
+    --primary: #35f1cf;
+    --primary-soft: #19bca4;
+
+    --text: #e5fffa;
+    --muted: #72918d;
+
+    --danger: #ff526d;
+
+    --shadow:
+        0 20px 70px rgba(0, 0, 0, 0.45);
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+body {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(0, 140, 120, 0.10),
+            transparent 40%
+        ),
+        linear-gradient(
+            rgba(0, 8, 9, 0.72),
+            rgba(0, 7, 8, 0.90)
+        ),
+        url("assets/pcb-wallpaper.png");
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    color: var(--text);
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   PCB CANVAS
+   ========================================================= */
+
+#pcbCanvas {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -2;
+
+    pointer-events: none;
+
+    opacity: 0.70;
+}
+
+
+/* =========================================================
+   DARK OVERLAY
+   ========================================================= */
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 20%,
+            rgba(0, 8, 9, 0.48) 100%
+        );
+
+    z-index: -1;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard {
+    width: min(1450px, 94%);
+
+    margin: auto;
+
+    padding:
+        35px
+        0
+        50px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.topbar {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    padding-bottom: 25px;
+
+    border-bottom:
+        1px solid
+        rgba(53, 241, 207, 0.16);
+
+    margin-bottom: 16px;
+}
+
+
+.brand-name {
+    font-size:
+        clamp(2.3rem, 5vw, 4rem);
+
+    font-weight: 900;
+
+    letter-spacing: 8px;
+
+    color: var(--primary);
+
+    text-shadow:
+        0 0 10px rgba(53, 241, 207, 0.65),
+        0 0 30px rgba(53, 241, 207, 0.35);
+}
+
+
+.brand-subtitle {
+    margin-top: 7px;
+
+    font-size: 10px;
+
+    letter-spacing: 4px;
+
+    color: var(--muted);
+}
+
+
+.system-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 28px;
+}
+
+
+.system-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    color: var(--primary);
+
+    transition:
+        color 0.25s ease;
+}
+
+
+.system-status.online {
+    color: var(--primary);
+}
+
+
+.system-status.offline {
+    color: var(--danger);
+}
+
+
+.status-dot,
+.live-dot,
+.signal-indicator {
+    width: 8px;
+    height: 8px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--primary);
+
+    box-shadow:
+        0 0 8px var(--primary),
+        0 0 18px rgba(53, 241, 207, 0.45);
+
+    animation:
+        pulse 1.8s infinite;
+}
+
+
+.system-status.offline .status-dot {
+    background: var(--danger);
+
+    box-shadow:
+        0 0 8px var(--danger),
+        0 0 18px rgba(255, 82, 109, 0.35);
+}
+
+
+.clock {
+    font-family: monospace;
+
+    font-size: 16px;
+
+    letter-spacing: 2px;
+
+    color: #b8dcd6;
+}
+
+
+/* =========================================================
+   SYSTEM BAR
+   ========================================================= */
+
+.system-bar {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    margin-bottom: 20px;
+
+    padding:
+        11px
+        18px;
+
+    border:
+        1px solid
+        rgba(53, 241, 207, 0.10);
+
+    background:
+        rgba(0, 15, 17, 0.45);
+
+    backdrop-filter: blur(10px);
+
+    border-radius: 8px;
+}
+
+
+.system-bar > div {
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+
+    border-right:
+        1px solid
+        rgba(53, 241, 207, 0.08);
+
+    padding-left: 14px;
+}
+
+
+.system-bar > div:last-child {
+    border-right: none;
+}
+
+
+.bar-label {
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    color: #506c68;
+}
+
+
+.bar-value {
+    font-family: monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    color: #b8d9d4;
+}
+
+
+.bar-value.online {
+    color: var(--primary);
+}
+
+
+.bar-value.offline {
+    color: var(--danger);
+}
+
+
+/* =========================================================
+   PANELS
+   ========================================================= */
+
+.panel {
+    position: relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(7, 28, 30, 0.68),
+            rgba(1, 11, 13, 0.72)
+        );
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        var(--shadow),
+        inset 0 0 35px rgba(53, 241, 207, 0.025);
+
+    backdrop-filter: blur(14px);
+
+    overflow: hidden;
+}
+
+
+.panel::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 10%;
+
+    width: 80%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(53, 241, 207, 0.45),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+
+.panel-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding:
+        16px
+        20px;
+
+    border-bottom:
+        1px solid
+        rgba(53, 241, 207, 0.10);
+
+    color: #9fc6c0;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+}
+
+
+.header-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.header-icon {
+    color: var(--primary);
+
+    font-size: 16px;
+
+    text-shadow:
+        0 0 10px
+        var(--primary);
+}
+
+
+.live-label {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: var(--primary);
+
+    font-size: 9px;
+}
+
+
+.sensor-refresh {
+    color: var(--primary);
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.inspection-grid {
+    display: grid;
+
+    grid-template-columns:
+        1.3fr
+        0.9fr;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   CAMERA
+   ========================================================= */
+
+.camera-panel {
+    min-height: 470px;
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.camera-panel:hover {
+    border-color:
+        var(--border-bright);
+
+    box-shadow:
+        var(--shadow),
+        inset 0 0 45px rgba(53, 241, 207, 0.035);
+}
+
+
+.camera-screen {
+    position: relative;
+
+    height: 380px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(28, 130, 115, 0.12),
+            transparent 60%
+        ),
+        #020a0b;
+}
+
+
+/* =========================================================
+   REAL CAMERA IMAGE SUPPORT
+   ========================================================= */
+
+#cameraStream {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    z-index: 2;
+
+    display: none;
+
+    background:
+        #020a0b;
+
+    image-rendering: auto;
+}
+
+
+.camera-screen.hardware-camera #cameraStream {
+    display: block;
+}
+
+
+.camera-screen.hardware-camera .pcb-board {
+    display: none;
+}
+
+
+/* =========================================================
+   CAMERA HUD
+   ========================================================= */
+
+.camera-hud {
+    position: absolute;
+
+    top: 16px;
+    left: 18px;
+    right: 18px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    z-index: 10;
+
+    font-family: monospace;
+
+    font-size: 9px;
+
+    color: #79a9a2;
+
+    letter-spacing: 1px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CAMERA GRID
+   ========================================================= */
+
+.scan-grid {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 4;
+
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(53, 241, 207, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(53, 241, 207, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size:
+        35px 35px;
+}
+
+
+/* =========================================================
+   CAMERA CORNERS
+   ========================================================= */
+
+.corner {
+    position: absolute;
+
+    width: 45px;
+    height: 45px;
+
+    z-index: 10;
+
+    pointer-events: none;
+}
+
+
+.corner::before,
+.corner::after {
+    content: "";
+
+    position: absolute;
+
+    background: var(--primary);
+
+    box-shadow:
+        0 0 8px
+        rgba(53, 241, 207, 0.7);
+}
+
+
+.corner::before {
+    width: 100%;
+    height: 1px;
+}
+
+
+.corner::after {
+    width: 1px;
+    height: 100%;
+}
+
+
+.top-left {
+    top: 40px;
+    left: 20px;
+}
+
+
+.top-right {
+    top: 40px;
+    right: 20px;
+
+    transform: rotate(90deg);
+}
+
+
+.bottom-left {
+    bottom: 40px;
+    left: 20px;
+
+    transform: rotate(-90deg);
+}
+
+
+.bottom-right {
+    bottom: 40px;
+    right: 20px;
+
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   PCB BOARD
+   ========================================================= */
+
+.pcb-board {
+    position: absolute;
+
+    width: 76%;
+    height: 66%;
+
+    left: 12%;
+    top: 18%;
+
+    z-index: 3;
+
+    border:
+        1px solid
+        rgba(75, 236, 207, 0.50);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(12, 57, 53, 0.82),
+            rgba(3, 22, 22, 0.94)
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(53, 241, 207, 0.09),
+
+        inset 0 0 30px
+        rgba(53, 241, 207, 0.04);
+
+    transition:
+        transform 0.4s ease;
+}
+
+
+.camera-panel:hover .pcb-board {
+    transform:
+        scale(1.008);
+}
+
+
+/* =========================================================
+   PCB SUBTLE INNER BORDER
+   ========================================================= */
+
+.pcb-board::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 12px;
+
+    border:
+        1px dashed
+        rgba(53, 241, 207, 0.12);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PCB COMPONENTS
+   ========================================================= */
+
+.pcb-component {
+    position: absolute;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #091a1a,
+            #020a0a
+        );
+
+    border:
+        1px solid
+        rgba(53, 241, 207, 0.55);
+
+    color:
+        rgba(155, 238, 225, 0.75);
+
+    font-family: monospace;
+
+    font-size: 8px;
+
+    box-shadow:
+        0 0 10px
+        rgba(53, 241, 207, 0.08);
+}
+
+
+.component-1 {
+    width: 80px;
+    height: 48px;
+
+    left: 20%;
+    top: 22%;
+}
+
+
+.component-2 {
+    width: 70px;
+    height: 45px;
+
+    right: 16%;
+    bottom: 20%;
+}
+
+
+.component-3 {
+    width: 48px;
+    height: 20px;
+
+    right: 27%;
+    top: 25%;
+}
+
+
+.component-4 {
+    width: 38px;
+    height: 20px;
+
+    left: 30%;
+    bottom: 22%;
+}
+
+
+/* =========================================================
+   PCB TRACES
+   ========================================================= */
+
+.pcb-trace {
+    position: absolute;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--primary),
+            transparent
+        );
+
+    opacity: 0.55;
+
+    box-shadow:
+        0 0 8px
+        rgba(53, 241, 207, 0.55);
+
+    z-index: 3;
+}
+
+
+.trace-a {
+    width: 30%;
+
+    left: 3%;
+    top: 29%;
+}
+
+
+.trace-b {
+    width: 25%;
+
+    right: 3%;
+    top: 43%;
+}
+
+
+.trace-c {
+    width: 32%;
+
+    left: 4%;
+    bottom: 30%;
+}
+
+
+.trace-d {
+    width: 25%;
+
+    right: 6%;
+    bottom: 20%;
+}
+
+
+.trace-e {
+    width: 20%;
+
+    left: 42%;
+    top: 12%;
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   PCB PADS
+   ========================================================= */
+
+.pad {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        var(--primary);
+
+    box-shadow:
+        0 0 7px
+        var(--primary);
+
+    z-index: 4;
+}
+
+
+.pad-1 {
+    left: 8%;
+    top: 18%;
+}
+
+
+.pad-2 {
+    left: 8%;
+    bottom: 18%;
+}
+
+
+.pad-3 {
+    right: 8%;
+    top: 18%;
+}
+
+
+.pad-4 {
+    right: 8%;
+    bottom: 18%;
+}
+
+
+.pad-5 {
+    left: 48%;
+    top: 8%;
+}
+
+
+.pad-6 {
+    right: 48%;
+    bottom: 8%;
+}
+
+
+/* =========================================================
+   INSPECTION ZONE
+   ========================================================= */
+
+.inspection-zone {
+    position: absolute;
+
+    width: 145px;
+    height: 110px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 6;
+
+    border:
+        1px solid
+        rgba(53, 241, 207, 0.35);
+
+    background:
+        rgba(53, 241, 207, 0.025);
+
+    pointer-events: none;
+}
+
+
+.inspection-label {
+    position: absolute;
+
+    top: -20px;
+    left: 0;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(53, 241, 207, 0.85);
+}
+
+
+/* =========================================================
+   RETICLE
+   ========================================================= */
+
+.reticle {
+    position: absolute;
+
+    inset: 15px;
+
+    z-index: 7;
+
+    pointer-events: none;
+}
+
+
+.reticle-horizontal,
+.reticle-vertical {
+    position: absolute;
+
+    background:
+        rgba(53, 241, 207, 0.35);
+}
+
+
+.reticle-horizontal {
+    width: 100%;
+    height: 1px;
+
+    top: 50%;
+}
+
+
+.reticle-vertical {
+    height: 100%;
+    width: 1px;
+
+    left: 50%;
+}
+
+
+.reticle-ring {
+    position: absolute;
+
+    width: 45px;
+    height: 45px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        var(--primary);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 15px
+        rgba(53, 241, 207, 0.25);
+
+    animation:
+        reticlePulse 2.2s infinite;
+}
+
+
+.reticle-center {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        var(--primary);
+
+    box-shadow:
+        0 0 10px
+        var(--primary);
+}
+
+
+/* =========================================================
+   SCAN LINE
+   ========================================================= */
+
+.scan-line {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 2px;
+
+    z-index: 20;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--primary),
+            transparent
+        );
+
+    box-shadow:
+        0 0 15px
+        var(--primary),
+
+        0 0 35px
+        rgba(53, 241, 207, 0.5);
+
+    animation:
+        scan 4s linear infinite;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CAMERA TELEMETRY
+   ========================================================= */
+
+.camera-telemetry {
+    position: absolute;
+
+    bottom: 15px;
+
+    left: 20px;
+    right: 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    z-index: 10;
+
+    font-family: monospace;
+
+    font-size: 7px;
+
+    letter-spacing: 1px;
+
+    color: #658782;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CAMERA FOOTER
+   ========================================================= */
+
+.camera-footer {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding:
+        12px
+        18px;
+
+    border-top:
+        1px solid
+        rgba(53, 241, 207, 0.10);
+
+    font-size: 8px;
+
+    letter-spacing: 1.5px;
+
+    color: #577570;
+}
+
+
+.footer-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color:
+        var(--primary);
+}
+
+
+/* =========================================================
+   SENSOR PANEL
+   ========================================================= */
+
+.sensor-list {
+    padding:
+        8px
+        22px
+        20px;
+}
+
+
+.sensor {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    padding:
+        20px 0;
+
+    border-bottom:
+        1px solid
+        rgba(53, 241, 207, 0.08);
+}
+
+
+.sensor-name {
+    display: block;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    color: #d0e9e5;
+}
+
+
+.sensor-source {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 7px;
+
+    letter-spacing: 1px;
+
+    color: var(--muted);
+}
+
+
+.sensor-value {
+    font-family: monospace;
+
+    font-size: 25px;
+
+    color:
+        var(--primary);
+
+    text-shadow:
+        0 0 12px
+        rgba(53, 241, 207, 0.3);
+
+    transition:
+        transform 0.2s ease,
+        text-shadow 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.sensor-value small {
+    font-size: 11px;
+
+    color:
+        #70938e;
+}
+
+
+/* =========================================================
+   LIVE SENSOR UPDATE EFFECT
+   ========================================================= */
+
+.sensor-value.updated {
+    transform:
+        translateY(-1px)
+        scale(1.025);
+
+    color:
+        #dffff8;
+
+    text-shadow:
+        0 0 12px
+        rgba(53, 241, 207, 0.65),
+
+        0 0 24px
+        rgba(53, 241, 207, 0.20);
+}
+
+
+/* =========================================================
+   SIGNAL
+   ========================================================= */
+
+.signal-status {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    padding: 14px;
+
+    border:
+        1px solid
+        rgba(53, 241, 207, 0.12);
+
+    background:
+        rgba(53, 241, 207, 0.025);
+}
+
+
+.signal-title {
+    display: block;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--muted);
+}
+
+
+.signal-value {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 10px;
+
+    color:
+        var(--primary);
+}
+
+
+/* =========================================================
+   SENSOR ACTIVITY
+   ========================================================= */
+
+.sensor-activity {
+    margin-top: 20px;
+}
+
+
+.activity-title {
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--muted);
+
+    margin-bottom: 9px;
+}
+
+
+.activity-bars {
+    height: 30px;
+
+    display: flex;
+
+    align-items: end;
+
+    gap: 4px;
+}
+
+
+.activity-bars span {
+    flex: 1;
+
+    height: 30%;
+
+    background:
+        var(--primary);
+
+    opacity: 0.45;
+
+    box-shadow:
+        0 0 5px
+        rgba(53, 241, 207, 0.45);
+
+    animation:
+        activity 1.3s infinite alternate;
+}
+
+
+.activity-bars span:nth-child(2) {
+    height: 70%;
+
+    animation-delay: 0.1s;
+}
+
+
+.activity-bars span:nth-child(3) {
+    height: 45%;
+
+    animation-delay: 0.2s;
+}
+
+
+.activity-bars span:nth-child(4) {
+    height: 85%;
+
+    animation-delay: 0.3s;
+}
+
+
+.activity-bars span:nth-child(5) {
+    height: 55%;
+
+    animation-delay: 0.4s;
+}
+
+
+.activity-bars span:nth-child(6) {
+    height: 90%;
+
+    animation-delay: 0.5s;
+}
+
+
+.activity-bars span:nth-child(7) {
+    height: 50%;
+
+    animation-delay: 0.6s;
+}
+
+
+.activity-bars span:nth-child(8) {
+    height: 75%;
+
+    animation-delay: 0.7s;
+}
+
+
+.activity-bars span:nth-child(9) {
+    height: 40%;
+
+    animation-delay: 0.8s;
+}
+
+
+.activity-bars span:nth-child(10) {
+    height: 80%;
+
+    animation-delay: 0.9s;
+}
+
+
+.activity-bars span:nth-child(11) {
+    height: 60%;
+
+    animation-delay: 1s;
+}
+
+
+.activity-bars span:nth-child(12) {
+    height: 90%;
+
+    animation-delay: 1.1s;
+}
+
+
+/* =========================================================
+   ANALYSIS
+   ========================================================= */
+
+.analysis-panel {
+    margin-bottom: 20px;
+
+    padding-bottom: 18px;
+}
+
+
+.analysis-engine {
+    font-size: 7px;
+
+    letter-spacing: 1.5px;
+
+    color:
+        var(--primary);
+}
+
+
+.analysis-content {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    padding:
+        25px;
+}
+
+
+.analysis-item {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+    padding-right: 20px;
+
+    border-right:
+        1px solid
+        rgba(53, 241, 207, 0.08);
+}
+
+
+.analysis-item:last-child {
+    border-right: none;
+}
+
+
+.analysis-label {
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--muted);
+}
+
+
+.pass-status {
+    font-family: monospace;
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    color:
+        var(--primary);
+
+    text-shadow:
+        0 0 15px
+        rgba(53, 241, 207, 0.45);
+}
+
+
+.fail-status {
+    font-family: monospace;
+
+    font-size: 27px;
+
+    font-weight: 700;
+
+    color:
+        var(--danger);
+
+    text-shadow:
+        0 0 15px
+        rgba(255, 82, 109, 0.40);
+}
+
+
+.analysis-value {
+    font-family: monospace;
+
+    font-size: 27px;
+
+    color:
+        #d9efeb;
+}
+
+
+.analysis-description {
+    font-size: 7px;
+
+    letter-spacing: 1px;
+
+    color:
+        #52716c;
+}
+
+
+/* =========================================================
+   PROBABILITY
+   ========================================================= */
+
+.probability-container {
+    padding:
+        0
+        25px;
+}
+
+
+.probability-label {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--muted);
+}
+
+
+.probability-bar {
+    width: 100%;
+
+    height: 5px;
+
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    border-radius: 5px;
+
+    overflow: hidden;
+}
+
+
+.probability-fill {
+    height: 100%;
+
+    width: 3.2%;
+
+    background:
+        var(--primary);
+
+    box-shadow:
+        0 0 12px
+        var(--primary);
+
+    transition:
+        width 0.6s ease;
+}
+
+
+.probability-fill.fail {
+    background:
+        var(--danger);
+
+    box-shadow:
+        0 0 12px
+        var(--danger);
+}
+
+
+/* =========================================================
+   ANALYSIS FOOTER
+   ========================================================= */
+
+.analysis-footer {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 18px;
+
+    padding:
+        12px
+        25px
+        0;
+
+    border-top:
+        1px solid
+        rgba(53, 241, 207, 0.07);
+
+    font-size: 7px;
+
+    letter-spacing: 1.5px;
+
+    color:
+        #54726d;
+}
+
+
+.analysis-dot {
+    display: inline-block;
+
+    width: 6px;
+    height: 6px;
+
+    margin-right: 8px;
+
+    border-radius: 50%;
+
+    background:
+        var(--primary);
+
+    box-shadow:
+        0 0 8px
+        var(--primary);
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.statistics {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+.stat-card {
+    position: relative;
+
+    padding:
+        24px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 12px;
+
+    background:
+        rgba(3, 17, 19, 0.58);
+
+    backdrop-filter:
+        blur(10px);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.stat-card:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        var(--border-bright);
+
+    box-shadow:
+        0 12px 40px
+        rgba(0, 0, 0, 0.25);
+}
+
+
+.stat-label {
+    display: block;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    color:
+        var(--muted);
+
+    margin-bottom: 10px;
+}
+
+
+.stat-number {
+    font-family: monospace;
+
+    font-size: 30px;
+
+    color:
+        #d9efeb;
+}
+
+
+.pass-number {
+    color:
+        var(--primary);
+}
+
+
+.fail-number {
+    color:
+        var(--danger);
+}
+
+
+.stat-trend {
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: 7px;
+
+    letter-spacing: 1px;
+
+    color:
+        #506d69;
+}
+
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+.history-panel {
+    margin-bottom: 30px;
+}
+
+
+.history-table {
+    padding:
+        5px
+        22px
+        12px;
+}
+
+
+.history-row {
+    display: grid;
+
+    grid-template-columns:
+        0.7fr
+        1.2fr
+        1.4fr
+        1.4fr
+        0.8fr;
+
+    align-items: center;
+
+    padding:
+        15px 0;
+
+    border-bottom:
+        1px solid
+        rgba(53, 241, 207, 0.07);
+
+    font-family: monospace;
+
+    font-size: 10px;
+
+    color:
+        #91ada8;
+}
+
+
+.history-heading {
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 7px;
+
+    letter-spacing: 1.5px;
+
+    color:
+        #506c67;
+}
+
+
+.history-pass {
+    color:
+        var(--primary);
+}
+
+
+.history-fail {
+    color:
+        var(--danger);
+}
+
+
+.history-danger {
+    color:
+        var(--danger);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    text-align: center;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        #405d59;
+}
+
+
+footer span {
+    color:
+        rgba(53, 241, 207, 0.45);
+}
+
+
+/* =========================================================
+   INSPECTION BUTTON SUPPORT
+   ========================================================= */
+
+#inspectButton {
+    border: 1px solid var(--border-bright);
+
+    background:
+        rgba(53, 241, 207, 0.06);
+
+    color:
+        var(--primary);
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+#inspectButton:hover {
+    background:
+        rgba(53, 241, 207, 0.12);
+
+    border-color:
+        rgba(53, 241, 207, 0.65);
+
+    box-shadow:
+        0 0 18px
+        rgba(53, 241, 207, 0.12);
+
+    transform:
+        translateY(-1px);
+}
+
+
+#inspectButton:active {
+    transform:
+        translateY(0);
+}
+
+
+#inspectButton:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   CONNECTION WARNING
+   ========================================================= */
+
+.connection-warning {
+    color:
+        var(--danger);
+
+    border-color:
+        rgba(255, 82, 109, 0.20);
+
+    background:
+        rgba(255, 82, 109, 0.035);
+}
+
+
+/* =========================================================
+   HARDWARE ACTIVE STATE
+   ========================================================= */
+
+.hardware-active {
+    color:
+        var(--primary) !important;
+}
+
+
+.demo-mode {
+    color:
+        #a7c8c2 !important;
+}
+
+
+/* =========================================================
+   LOADING STATE
+   ========================================================= */
+
+.loading {
+    position: relative;
+
+    pointer-events: none;
+
+    opacity: 0.65;
+}
+
+
+.loading::after {
+    content: "";
+
+    position: absolute;
+
+    width: 18px;
+    height: 18px;
+
+    top: 50%;
+    left: 50%;
+
+    margin:
+        -9px
+        0
+        0
+        -9px;
+
+    border:
+        2px solid
+        rgba(53, 241, 207, 0.18);
+
+    border-top-color:
+        var(--primary);
+
+    border-radius: 50%;
+
+    animation:
+        loadingSpin 0.8s linear infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+
+        transform:
+            scale(1);
+    }
+
+    50% {
+        opacity: 0.35;
+
+        transform:
+            scale(0.75);
+    }
+}
+
+
+@keyframes scan {
+
+    0% {
+        transform:
+            translateY(-10px);
+
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translateY(390px);
+
+        opacity: 0;
+    }
+}
+
+
+@keyframes reticlePulse {
+
+    0%,
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+        opacity: 0.75;
+    }
+
+    50% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.15);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes activity {
+
+    from {
+        transform:
+            scaleY(0.55);
+
+        opacity: 0.25;
+    }
+
+    to {
+        transform:
+            scaleY(1);
+
+        opacity: 0.75;
+    }
+}
+
+
+@keyframes loadingSpin {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 950px) {
+
+    .inspection-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .camera-panel {
+        min-height:
+            430px;
+    }
+
+
+    .analysis-content {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .analysis-item {
+        border-right:
+            none;
+
+        border-bottom:
+            1px solid
+            rgba(53, 241, 207, 0.08);
+
+        padding-bottom:
+            18px;
+    }
+
+
+    .analysis-item:last-child {
+        border-bottom:
+            none;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .dashboard {
+        width: 92%;
+
+        padding-top:
+            20px;
+    }
+
+
+    .topbar {
+        flex-direction:
+            column;
+
+        gap:
+            20px;
+    }
+
+
+    .system-info {
+        width: 100%;
+
+        justify-content:
+            space-between;
+    }
+
+
+    .system-bar {
+        grid-template-columns:
+            1fr 1fr;
+
+        gap:
+            10px;
+    }
+
+
+    .system-bar > div {
+        border-right:
+            none;
+    }
+
+
+    .statistics {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .camera-screen {
+        height:
+            320px;
+    }
+
+
+    .camera-panel {
+        min-height:
+            410px;
+    }
+
+
+    .analysis-content {
+        padding:
+            20px;
+    }
+
+
+    .sensor-value {
+        font-size:
+            21px;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .brand-name {
+        letter-spacing:
+            5px;
+    }
+
+
+    .brand-subtitle {
+        font-size:
+            8px;
+
+        letter-spacing:
+            2.5px;
+    }
+
+
+    .system-bar {
+        display:
+            none;
+    }
+
+
+    .camera-screen {
+        height:
+            280px;
+    }
+
+
+    .camera-telemetry {
+        font-size:
+            6px;
+
+        left:
+            12px;
+
+        right:
+            12px;
+    }
+
+
+    .camera-footer {
+        font-size:
+            7px;
+
+        padding:
+            10px 12px;
+    }
+
+
+    .history-table {
+        overflow-x:
+            auto;
+    }
+
+
+    .history-row {
+        min-width:
+            600px;
+    }
+
+
+    .probability-container {
+        padding:
+            0 18px;
+    }
+
+
+    .analysis-footer {
+        padding-left:
+            18px;
+
+        padding-right:
+            18px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        scroll-behavior:
+            auto !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+}
+/* =========================================================
+   BOARDSY — ELECTRICAL DSA ANALYSIS
+   ========================================================= */
+
+.dsa-section {
+    position: relative;
+    width: 100%;
+    margin-top: 22px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(4, 22, 24, 0.96),
+            rgba(1, 10, 12, 0.98)
+        );
+
+    border: 1px solid rgba(53, 241, 207, 0.24);
+    border-radius: 18px;
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 70px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.dsa-header {
+    min-height: 78px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    border-bottom: 1px solid rgba(53, 241, 207, 0.13);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(7, 29, 31, 0.92),
+            rgba(3, 16, 18, 0.58)
+        );
+
+    position: relative;
+}
+
+
+.dsa-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(53, 241, 207, 0.35),
+            transparent
+        );
+}
+
+
+.dsa-title-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+.dsa-title-icon {
+    width: 38px;
+    height: 38px;
+
+    border: 1px solid rgba(53, 241, 207, 0.45);
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #35f1cf;
+
+    font-size: 26px;
+
+    background:
+        rgba(53, 241, 207, 0.035);
+
+    box-shadow:
+        0 0 20px rgba(53, 241, 207, 0.06);
+}
+
+
+.dsa-title-group h2 {
+    margin: 0;
+
+    color: #dffefa;
+
+    font-size: 14px;
+
+    letter-spacing: 2px;
+
+    font-weight: 700;
+}
+
+
+.dsa-title-group p {
+    margin: 6px 0 0;
+
+    color: #628984;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    font-weight: 600;
+}
+
+
+.dsa-ready {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    color: #35f1cf;
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    font-weight: 700;
+}
+
+
+.dsa-ready-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #35f1cf;
+
+    box-shadow:
+        0 0 12px rgba(53, 241, 207, 0.8);
+
+    animation: dsaPulse 1.8s infinite;
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.dsa-main-grid {
+    display: grid;
+
+    grid-template-columns:
+        1.05fr
+        1.75fr
+        1fr;
+
+    gap: 18px;
+
+    padding: 18px;
+}
+
+
+/* =========================================================
+   METRIC CARDS
+   ========================================================= */
+
+.dsa-metrics {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+}
+
+
+.dsa-card {
+    min-height: 125px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    border: 1px solid rgba(53, 241, 207, 0.22);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(5, 27, 29, 0.82),
+            rgba(2, 13, 15, 0.88)
+        );
+
+    clip-path:
+        polygon(
+            0 12px,
+            12px 0,
+            100% 0,
+            100% calc(100% - 12px),
+            calc(100% - 12px) 100%,
+            0 100%
+        );
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.dsa-card:hover {
+    transform: translateY(-2px);
+
+    border-color:
+        rgba(53, 241, 207, 0.42);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.28),
+        inset 0 0 30px rgba(53, 241, 207, 0.025);
+}
+
+
+.dsa-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 20px;
+    bottom: 20px;
+
+    width: 2px;
+
+    background:
+        linear-gradient(
+            transparent,
+            #35f1cf,
+            transparent
+        );
+
+    opacity: 0.65;
+}
+
+
+.dsa-card-icon {
+    flex-shrink: 0;
+
+    width: 50px;
+    height: 50px;
+
+    border: 1px solid rgba(53, 241, 207, 0.32);
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #35f1cf;
+
+    font-size: 25px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(53, 241, 207, 0.08),
+            rgba(53, 241, 207, 0.01)
+        );
+
+    box-shadow:
+        inset 0 0 18px rgba(53, 241, 207, 0.04);
+}
+
+
+.readings-icon {
+    font-size: 23px;
+}
+
+
+.abnormal-icon {
+    color: #35f1cf;
+}
+
+
+.decision-icon {
+    font-size: 27px;
+}
+
+
+.dsa-card-content {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.dsa-card-label {
+    color: #35f1cf;
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    font-weight: 700;
+}
+
+
+.dsa-card-content strong {
+    margin-top: 7px;
+
+    color: #e6fffb;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.dsa-card-content small {
+    margin-top: 8px;
+
+    color: #5f817c;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+}
+
+
+#dsaDecision {
+    color: #35f1cf;
+}
+
+
+#dsaDecision.fail {
+    color: #ff526d;
+}
+
+
+/* =========================================================
+   RESISTANCE DISPLAY
+   ========================================================= */
+
+.resistance-display {
+    min-height: 268px;
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(53, 241, 207, 0.38);
+
+    background:
+        linear-gradient(
+            125deg,
+            rgba(3, 21, 23, 0.92),
+            rgba(1, 12, 15, 0.98)
+        );
+
+    clip-path:
+        polygon(
+            0 14px,
+            14px 0,
+            100% 0,
+            100% calc(100% - 14px),
+            calc(100% - 14px) 100%,
+            0 100%
+        );
+
+    box-shadow:
+        inset 0 0 50px rgba(53, 241, 207, 0.025);
+}
+
+
+.resistance-display::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 4px;
+
+    background:
+        linear-gradient(
+            transparent,
+            #35f1cf 30%,
+            #35f1cf 70%,
+            transparent
+        );
+
+    box-shadow:
+        0 0 20px rgba(53, 241, 207, 0.3);
+}
+
+
+.resistance-bg-grid {
+    position: absolute;
+    inset: 0;
+
+    opacity: 0.28;
+
+    background-image:
+        linear-gradient(
+            rgba(53, 241, 207, 0.06) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(53, 241, 207, 0.06) 1px,
+            transparent 1px
+        );
+
+    background-size: 32px 32px;
+
+    mask-image:
+        linear-gradient(
+            90deg,
+            black,
+            transparent
+        );
+}
+
+
+/* =========================================================
+   CIRCUIT DECORATION
+   ========================================================= */
+
+.resistance-circuit {
+    position: absolute;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(53, 241, 207, 0.3),
+            transparent
+        );
+
+    opacity: 0.6;
+}
+
+
+.circuit-one {
+    width: 55%;
+
+    top: 22%;
+
+    right: 0;
+}
+
+
+.circuit-two {
+    width: 42%;
+
+    top: 74%;
+
+    right: 0;
+}
+
+
+.circuit-three {
+    width: 28%;
+
+    top: 48%;
+
+    left: 35%;
+}
+
+
+/* =========================================================
+   Ω DISPLAY
+   ========================================================= */
+
+.omega-display {
+    width: 175px;
+    height: 175px;
+
+    position: relative;
+
+    flex-shrink: 0;
+
+    margin-left: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.omega-ring {
+    position: absolute;
+
+    border: 1px solid rgba(53, 241, 207, 0.42);
+
+    border-radius: 50%;
+}
+
+
+.ring-one {
+    width: 104px;
+    height: 104px;
+
+    border-width: 3px;
+
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+
+    animation: omegaRotate 8s linear infinite;
+}
+
+
+.ring-two {
+    width: 132px;
+    height: 132px;
+
+    border-color:
+        rgba(53, 241, 207, 0.22);
+
+    border-left-color:
+        #35f1cf;
+
+    animation: omegaRotateReverse 12s linear infinite;
+}
+
+
+.ring-three {
+    width: 158px;
+    height: 158px;
+
+    border-color:
+        rgba(53, 241, 207, 0.12);
+
+    border-style: dashed;
+
+    animation: omegaRotate 20s linear infinite;
+}
+
+
+.omega-symbol {
+    width: 78px;
+    height: 78px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(53, 241, 207, 0.4);
+
+    border-radius: 50%;
+
+    color: #35f1cf;
+
+    font-size: 58px;
+
+    font-weight: 300;
+
+    text-shadow:
+        0 0 18px rgba(53, 241, 207, 0.55);
+
+    box-shadow:
+        0 0 35px rgba(53, 241, 207, 0.08),
+        inset 0 0 20px rgba(53, 241, 207, 0.04);
+}
+
+
+/* =========================================================
+   RESISTANCE INFORMATION
+   ========================================================= */
+
+.resistance-information {
+    position: relative;
+
+    z-index: 2;
+
+    flex: 1;
+
+    padding: 30px 25px 30px 8px;
+}
+
+
+.resistance-label {
+    display: block;
+
+    color: #35f1cf;
+
+    font-size: 10px;
+
+    letter-spacing: 1.6px;
+
+    font-weight: 700;
+}
+
+
+.resistance-number {
+    display: flex;
+    align-items: baseline;
+
+    gap: 9px;
+
+    margin-top: 12px;
+}
+
+
+#dsaResistance {
+    color: #e8fffc;
+
+    font-size: clamp(36px, 3vw, 52px);
+
+    line-height: 1;
+
+    font-weight: 500;
+
+    letter-spacing: -1px;
+
+    text-shadow:
+        0 0 20px rgba(53, 241, 207, 0.08);
+}
+
+
+.resistance-unit {
+    color: #b8d6d1;
+
+    font-size: 20px;
+}
+
+
+.resistance-progress {
+    width: 90%;
+
+    height: 8px;
+
+    margin-top: 24px;
+
+    border: 1px solid rgba(53, 241, 207, 0.3);
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background:
+        rgba(53, 241, 207, 0.04);
+}
+
+
+.resistance-progress-fill {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #19bca4,
+            #35f1cf
+        );
+
+    box-shadow:
+        0 0 12px rgba(53, 241, 207, 0.55);
+
+    transition:
+        width 0.7s ease;
+}
+
+
+.resistance-percentage {
+    display: flex;
+
+    gap: 7px;
+
+    margin-top: 10px;
+
+    color: #35f1cf;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    font-weight: 600;
+}
+
+
+.resistance-equation {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 25px;
+
+    color: #668984;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+
+.resistance-equation span:first-child {
+    color: #b7d9d4;
+
+    font-weight: 700;
+}
+
+
+.equation-divider {
+    color: #35f1cf;
+}
+
+
+/* =========================================================
+   ANALYSIS STATUS PANEL
+   ========================================================= */
+
+.dsa-status-panel {
+    min-height: 268px;
+
+    position: relative;
+
+    padding: 25px;
+
+    border: 1px solid rgba(53, 241, 207, 0.34);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(5, 26, 28, 0.9),
+            rgba(2, 13, 15, 0.95)
+        );
+
+    clip-path:
+        polygon(
+            0 14px,
+            14px 0,
+            100% 0,
+            100% calc(100% - 14px),
+            calc(100% - 14px) 100%,
+            0 100%
+        );
+}
+
+
+.dsa-status-panel::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 25px;
+
+    width: 3px;
+    height: 45px;
+
+    background: #35f1cf;
+
+    box-shadow:
+        0 0 15px rgba(53, 241, 207, 0.4);
+}
+
+
+.status-panel-header {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.status-icon {
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(53, 241, 207, 0.34);
+
+    border-radius: 50%;
+
+    color: #35f1cf;
+
+    font-size: 25px;
+}
+
+
+.status-panel-header > div:last-child {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.status-panel-header span {
+    color: #35f1cf;
+
+    font-size: 9px;
+
+    letter-spacing: 1.3px;
+
+    font-weight: 700;
+}
+
+
+.status-panel-header strong {
+    color: #35f1cf;
+
+    font-size: 20px;
+
+    letter-spacing: 1px;
+}
+
+
+.status-wave {
+    height: 1px;
+
+    margin: 25px 0 20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(53, 241, 207, 0.3),
+            rgba(53, 241, 207, 0.05),
+            transparent
+        );
+
+    position: relative;
+}
+
+
+.status-wave::after {
+    content: "";
+
+    position: absolute;
+
+    right: 8%;
+
+    top: -5px;
+
+    width: 65px;
+    height: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 45%,
+            #35f1cf 47%,
+            #35f1cf 53%,
+            transparent 55%
+        );
+
+    opacity: 0.8;
+}
+
+
+.analysis-checklist {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 17px;
+}
+
+
+.analysis-step {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    color: #92bbb5;
+
+    font-size: 9px;
+
+    letter-spacing: 0.9px;
+
+    transition:
+        color 0.3s ease;
+}
+
+
+.step-icon {
+    width: 21px;
+    height: 21px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(53, 241, 207, 0.45);
+
+    border-radius: 50%;
+
+    color: #35f1cf;
+
+    font-size: 11px;
+
+    box-shadow:
+        0 0 10px rgba(53, 241, 207, 0.06);
+}
+
+
+.analysis-step.active {
+    color: #dffefa;
+}
+
+
+.analysis-step.complete .step-icon {
+    background:
+        rgba(53, 241, 207, 0.08);
+
+    box-shadow:
+        0 0 14px rgba(53, 241, 207, 0.14);
+}
+
+
+.status-bottom-line {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    position: absolute;
+
+    left: 25px;
+    right: 25px;
+    bottom: 18px;
+
+    color: #587873;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+}
+
+
+.status-pulse {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #35f1cf;
+
+    box-shadow:
+        0 0 9px rgba(53, 241, 207, 0.7);
+}
+
+
+/* =========================================================
+   DSA WORKFLOW
+   ========================================================= */
+
+.dsa-workflow {
+    min-height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 0 18px 18px;
+
+    padding: 0 18px;
+
+    border: 1px solid rgba(53, 241, 207, 0.25);
+
+    background:
+        rgba(3, 18, 20, 0.78);
+
+    clip-path:
+        polygon(
+            0 10px,
+            10px 0,
+            100% 0,
+            100% calc(100% - 10px),
+            calc(100% - 10px) 100%,
+            0 100%
+        );
+
+    overflow: hidden;
+}
+
+
+.workflow-start-icon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(53, 241, 207, 0.4);
+
+    border-radius: 50%;
+
+    color: #35f1cf;
+
+    font-size: 21px;
+}
+
+
+.workflow-item {
+    color: #b9d7d2;
+
+    font-size: 10px;
+
+    letter-spacing: 0.8px;
+
+    white-space: nowrap;
+
+    font-weight: 600;
+}
+
+
+.workflow-arrow {
+    color: #35f1cf;
+
+    font-size: 17px;
+
+    opacity: 0.8;
+}
+
+
+.workflow-progress {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+}
+
+
+.workflow-progress span {
+    display: block;
+
+    width: 8px;
+    height: 12px;
+
+    transform: skewX(-25deg);
+
+    background:
+        #35f1cf;
+
+    opacity: 0.9;
+
+    animation:
+        workflowPulse 1.8s infinite;
+}
+
+
+.workflow-progress span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+
+.workflow-progress span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+
+.workflow-progress span:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+
+.workflow-progress span:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+
+.workflow-online {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-left: 4px;
+
+    white-space: nowrap;
+}
+
+
+.workflow-online span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #35f1cf;
+
+    box-shadow:
+        0 0 12px rgba(53, 241, 207, 0.75);
+}
+
+
+.workflow-online strong {
+    color: #35f1cf;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   FAIL STATE
+   ========================================================= */
+
+.dsa-section.dsa-fail .dsa-ready,
+.dsa-section.dsa-fail .dsa-ready-dot,
+.dsa-section.dsa-fail .dsa-title-icon {
+    color: #ff526d;
+}
+
+
+.dsa-section.dsa-fail .dsa-ready-dot {
+    background: #ff526d;
+
+    box-shadow:
+        0 0 12px rgba(255, 82, 109, 0.75);
+}
+
+
+.dsa-section.dsa-fail .resistance-progress-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #c93149,
+            #ff526d
+        );
+
+    box-shadow:
+        0 0 12px rgba(255, 82, 109, 0.5);
+}
+
+
+.dsa-section.dsa-fail #dsaDecision,
+.dsa-section.dsa-fail #dsaAnalysisStatus {
+    color: #ff526d;
+}
+
+
+.dsa-section.dsa-fail .status-pulse,
+.dsa-section.dsa-fail .workflow-online span {
+    background: #ff526d;
+
+    box-shadow:
+        0 0 12px rgba(255, 82, 109, 0.7);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes dsaPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.55;
+        transform: scale(0.75);
+    }
+
+}
+
+
+@keyframes omegaRotate {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes omegaRotateReverse {
+
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+
+}
+
+
+@keyframes workflowPulse {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1150px) {
+
+    .dsa-main-grid {
+        grid-template-columns: 1fr 1.5fr;
+    }
+
+    .dsa-status-panel {
+        grid-column: 1 / -1;
+        min-height: 220px;
+    }
+
+    .analysis-checklist {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .status-bottom-line {
+        position: relative;
+        left: auto;
+        right: auto;
+        bottom: auto;
+
+        margin-top: 20px;
+    }
+
+}
+
+
+@media (max-width: 850px) {
+
+    .dsa-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dsa-status-panel {
+        grid-column: auto;
+    }
+
+    .resistance-display {
+        min-height: 250px;
+    }
+
+    .dsa-workflow {
+        overflow-x: auto;
+        justify-content: flex-start;
+    }
+
+    .workflow-progress {
+        margin-left: 20px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .dsa-header {
+        padding: 0 18px;
+    }
+
+    .dsa-main-grid {
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .dsa-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .dsa-card {
+        min-height: 105px;
+    }
+
+    .omega-display {
+        width: 125px;
+        height: 125px;
+
+        margin-left: 10px;
+    }
+
+    .ring-one {
+        width: 80px;
+        height: 80px;
+    }
+
+    .ring-two {
+        width: 100px;
+        height: 100px;
+    }
+
+    .ring-three {
+        width: 120px;
+        height: 120px;
+    }
+
+    .omega-symbol {
+        width: 60px;
+        height: 60px;
+
+        font-size: 43px;
+    }
+
+    .resistance-information {
+        padding: 20px 12px;
+    }
+
+    #dsaResistance {
+        font-size: 32px;
+    }
+
+    .analysis-checklist {
+        flex-direction: column;
+    }
+
+    .dsa-workflow {
+        margin: 0 12px 12px;
+    }
+
+}
