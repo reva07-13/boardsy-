@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BOARDSY | PCB Integrity Inspection</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =====================================================
+         ANIMATED PCB BACKGROUND
+         ===================================================== -->
+
+    <canvas id="pcbCanvas"></canvas>
+
+
+    <!-- =====================================================
+         MAIN DASHBOARD
+         ===================================================== -->
+
+    <main class="dashboard">
+
+
+        <!-- =================================================
+             TOP HEADER
+             ================================================= -->
+
+        <header class="topbar">
+
+            <div class="brand">
+
+                <div class="brand-name">
+                    BOARDSY
+                </div>
+
+                <div class="brand-subtitle">
+                    PCB INTEGRITY INSPECTION SYSTEM
+                </div>
+
+            </div>
+
+
+            <div class="system-info">
+
+                <div
+                    class="system-status"
+                    id="systemStatus"
+                >
+                    <span
+                        class="status-dot"
+                        id="systemStatusDot"
+                    ></span>
+
+                    <span id="systemStatusText">
+                        SYSTEM ONLINE
+                    </span>
+                </div>
+
+
+                <div
+                    class="clock"
+                    id="clock"
+                >
+                    00:00:00
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             SYSTEM BAR
+             ================================================= -->
+
+        <div class="system-bar">
+
+            <div>
+
+                <span class="bar-label">
+                    DEVICE
+                </span>
+
+                <span
+                    class="bar-value"
+                    id="deviceValue"
+                >
+                    BOARDSY-01
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="bar-label">
+                    CAMERA
+                </span>
+
+                <span
+                    class="bar-value online"
+                    id="cameraStatus"
+                >
+                    CONNECTING
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="bar-label">
+                    SENSORS
+                </span>
+
+                <span
+                    class="bar-value online"
+                    id="sensorStatus"
+                >
+                    CONNECTING
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <span class="bar-label">
+                    ANALYSIS
+                </span>
+
+                <span
+                    class="bar-value online"
+                    id="analysisStatus"
+                >
+                    READY
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             MAIN INSPECTION GRID
+             ================================================= -->
+
+        <section class="inspection-grid">
+
+
+            <!-- =================================================
+                 CAMERA PANEL
+                 ================================================= -->
+
+            <div class="panel camera-panel">
+
+                <div class="panel-header">
+
+                    <div class="header-title">
+
+                        <span class="header-icon">
+                            ◉
+                        </span>
+
+                        ESP32-CAM
+
+                    </div>
+
+
+                    <div
+                        class="live-label"
+                        id="cameraLiveLabel"
+                    >
+
+                        <span class="live-dot"></span>
+
+                        <span id="cameraLiveText">
+                            LIVE
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="camera-screen">
+
+
+                    <!-- Camera HUD -->
+
+                    <div class="camera-hud">
+
+                        <span>
+                            CAM_01
+                        </span>
+
+                        <span id="cameraTime">
+                            00:00:00
+                        </span>
+
+                    </div>
+
+
+                    <!-- Corner markers -->
+
+                    <div class="corner top-left"></div>
+
+                    <div class="corner top-right"></div>
+
+                    <div class="corner bottom-left"></div>
+
+                    <div class="corner bottom-right"></div>
+
+
+                    <!-- Scan grid -->
+
+                    <div class="scan-grid"></div>
+
+
+                    <!-- =================================================
+                         ACTUAL CAMERA IMAGE
+
+                         scriptt.js can populate this from:
+                         /capture
+                         or the backend camera endpoint.
+
+                         It is initially hidden so the existing
+                         simulated PCB display remains available.
+                         ================================================= -->
+
+                    <img
+                        id="cameraStream"
+                        class="camera-stream"
+                        src=""
+                        alt="ESP32-CAM PCB inspection view"
+                    >
+
+
+                    <!-- =================================================
+                         SIMULATED PCB FALLBACK
+
+                         Used while the physical ESP32-CAM is not
+                         connected.
+                         ================================================= -->
+
+                    <div
+                        class="pcb-board"
+                        id="simulatedPcb"
+                    >
+
+
+                        <!-- PCB traces -->
+
+                        <div class="pcb-trace trace-a"></div>
+
+                        <div class="pcb-trace trace-b"></div>
+
+                        <div class="pcb-trace trace-c"></div>
+
+                        <div class="pcb-trace trace-d"></div>
+
+                        <div class="pcb-trace trace-e"></div>
+
+
+                        <!-- PCB components -->
+
+                        <div class="pcb-component component-1">
+
+                            <span>
+                                U1
+                            </span>
+
+                        </div>
+
+
+                        <div class="pcb-component component-2">
+
+                            <span>
+                                IC2
+                            </span>
+
+                        </div>
+
+
+                        <div class="pcb-component component-3">
+
+                            <span>
+                                R1
+                            </span>
+
+                        </div>
+
+
+                        <div class="pcb-component component-4">
+
+                            <span>
+                                C1
+                            </span>
+
+                        </div>
+
+
+                        <!-- Inspection zone -->
+
+                        <div class="inspection-zone">
+
+                            <div class="reticle">
+
+                                <div class="reticle-horizontal"></div>
+
+                                <div class="reticle-vertical"></div>
+
+                                <div class="reticle-ring"></div>
+
+                                <div class="reticle-center"></div>
+
+                            </div>
+
+
+                            <div class="inspection-label">
+                                INSPECTION ZONE
+                            </div>
+
+                        </div>
+
+
+                        <!-- PCB pads -->
+
+                        <div class="pad pad-1"></div>
+
+                        <div class="pad pad-2"></div>
+
+                        <div class="pad pad-3"></div>
+
+                        <div class="pad pad-4"></div>
+
+                        <div class="pad pad-5"></div>
+
+                        <div class="pad pad-6"></div>
+
+                    </div>
+
+
+                    <!-- Moving scan line -->
+
+                    <div class="scan-line"></div>
+
+
+                    <!-- Camera telemetry -->
+
+                    <div class="camera-telemetry">
+
+                        <span id="cameraResolution">
+                            CAMERA INITIALIZING
+                        </span>
+
+                        <span id="cameraFps">
+                            FPS --
+                        </span>
+
+                        <span id="cameraVisionStatus">
+                            VISION SIMULATION
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="camera-footer">
+
+                    <div class="footer-status">
+
+                        <span
+                            class="status-dot"
+                            id="cameraFooterDot"
+                        ></span>
+
+                        <span id="cameraFooterStatus">
+                            CAMERA INITIALIZING
+                        </span>
+
+                    </div>
+
+
+                    <span id="cameraStreamStatus">
+                        STREAM WAITING
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SENSOR PANEL
+                 ================================================= -->
+
+            <div class="panel sensor-panel">
+
+                <div class="panel-header">
+
+                    <div class="header-title">
+
+                        <span class="header-icon">
+                            ⌁
+                        </span>
+
+                        LIVE SENSOR DATA
+
+                    </div>
+
+
+                    <span
+                        class="sensor-refresh"
+                        id="sensorLiveStatus"
+                    >
+                        ● WAITING
+                    </span>
+
+                </div>
+
+
+                <div class="sensor-list">
+
+
+                    <!-- CURRENT -->
+
+                    <div class="sensor">
+
+                        <div class="sensor-info">
+
+                            <span class="sensor-name">
+                                CURRENT
+                            </span>
+
+                            <span class="sensor-source">
+                                INA219 POWER MONITOR
+                            </span>
+
+                        </div>
+
+
+                        <div class="sensor-value">
+
+                            <span id="currentValue">
+                                --
+                            </span>
+
+                            <small>
+                                mA
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VOLTAGE -->
+
+                    <div class="sensor">
+
+                        <div class="sensor-info">
+
+                            <span class="sensor-name">
+                                VOLTAGE
+                            </span>
+
+                            <span class="sensor-source">
+                                INA219 BUS VOLTAGE
+                            </span>
+
+                        </div>
+
+
+                        <div class="sensor-value">
+
+                            <span id="voltageValue">
+                                --
+                            </span>
+
+                            <small>
+                                V
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RESISTANCE -->
+
+                    <div class="sensor">
+
+                        <div class="sensor-info">
+
+                            <span class="sensor-name">
+                                RESISTANCE
+                            </span>
+
+                            <span class="sensor-source">
+                                BACKEND CALCULATED
+                            </span>
+
+                        </div>
+
+
+                        <div class="sensor-value">
+
+                            <span id="resistanceValue">
+                                --
+                            </span>
+
+                            <small>
+                                Ω
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AD620 -->
+
+                    <div class="sensor">
+
+                        <div class="sensor-info">
+
+                            <span class="sensor-name">
+                                AD620 OUTPUT
+                            </span>
+
+                            <span class="sensor-source">
+                                ADS1115 A0
+                            </span>
+
+                        </div>
+
+
+                        <div class="sensor-value">
+
+                            <span id="ad620Value">
+                                --
+                            </span>
+
+                            <small>
+                                V
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SIGNAL -->
+
+                    <div class="signal-status">
+
+                        <span
+                            class="signal-indicator"
+                            id="signalIndicator"
+                        ></span>
+
+
+                        <div>
+
+                            <span class="signal-title">
+                                SIGNAL STATUS
+                            </span>
+
+                            <span
+                                class="signal-value"
+                                id="signalValue"
+                            >
+                                WAITING
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Sensor activity -->
+
+                    <div class="sensor-activity">
+
+                        <div class="activity-title">
+                            SENSOR ACTIVITY
+                        </div>
+
+
+                        <div
+                            class="activity-bars"
+                            id="activityBars"
+                        >
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                            <span></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             INSPECTION CONTROL
+             ================================================= -->
+
+        <section class="panel inspection-control-panel">
+
+            <div class="panel-header">
+
+                <div class="header-title">
+
+                    <span class="header-icon">
+                        ◇
+                    </span>
+
+                    INSPECTION CONTROL
+
+                </div>
+
+
+                <span
+                    id="inspectionControlStatus"
+                    class="history-count"
+                >
+                    READY
+                </span>
+
+            </div>
+
+
+            <div class="inspection-control-content">
+
+                <div>
+
+                    <span class="analysis-label">
+                        SYSTEM
+                    </span>
+
+                    <span
+                        id="inspectionMode"
+                        class="analysis-description"
+                    >
+                        DEMO / SIMULATION
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="inspectButton"
+                >
+                    START INSPECTION
+                </button>
+
+
+                <div
+                    class="inspection-progress"
+                    id="inspectionProgress"
+                >
+
+                    <span>
+                        READY FOR INSPECTION
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CRACK ANALYSIS
+             ================================================= -->
+
+        <section class="panel analysis-panel">
+
+            <div class="panel-header">
+
+                <div class="header-title">
+
+                    <span class="header-icon">
+                        ⌬
+                    </span>
+
+                    CRACK DETECTION ANALYSIS
+
+                </div>
+
+
+                <div
+                    class="analysis-engine"
+                    id="analysisEngine"
+                >
+                    DEMO ANALYSIS ENGINE
+                </div>
+
+            </div>
+
+
+            <div class="analysis-content">
+
+
+                <!-- PCB STATUS -->
+
+                <div class="analysis-item">
+
+                    <span class="analysis-label">
+                        PCB STATUS
+                    </span>
+
+
+                    <span
+                        class="pass-status"
+                        id="pcbStatus"
+                    >
+                        READY
+                    </span>
+
+
+                    <span
+                        class="analysis-description"
+                        id="pcbStatusDescription"
+                    >
+                        AWAITING INSPECTION
+                    </span>
+
+                </div>
+
+
+                <!-- PROBABILITY -->
+
+                <div class="analysis-item">
+
+                    <span class="analysis-label">
+                        CRACK PROBABILITY
+                    </span>
+
+
+                    <span class="analysis-value">
+
+                        <span id="crackProbability">
+                            --
+                        </span>%
+
+                    </span>
+
+
+                    <span
+                        class="analysis-description"
+                        id="probabilityDescription"
+                    >
+                        NO ANALYSIS YET
+                    </span>
+
+                </div>
+
+
+                <!-- INSPECTION TIME -->
+
+                <div class="analysis-item">
+
+                    <span class="analysis-label">
+                        INSPECTION TIME
+                    </span>
+
+
+                    <span class="analysis-value">
+
+                        <span id="inspectionTime">
+                            --
+                        </span>
+
+                        s
+
+                    </span>
+
+
+                    <span
+                        class="analysis-description"
+                        id="inspectionTimeDescription"
+                    >
+                        WAITING FOR INSPECTION
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Probability -->
+
+            <div class="probability-container">
+
+                <div class="probability-label">
+
+                    <span>
+                        DEFECT PROBABILITY
+                    </span>
+
+
+                    <span id="probabilityText">
+                        --
+                    </span>
+
+                </div>
+
+
+                <div class="probability-bar">
+
+                    <div
+                        class="probability-fill"
+                        id="probabilityFill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="analysis-footer">
+
+                <span
+                    class="analysis-dot"
+                    id="analysisDot"
+                ></span>
+
+
+                <span id="analysisFooterText">
+                    ANALYSIS ENGINE READY
+                </span>
+
+
+                <span id="analysisCompleteText">
+                    WAITING
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DSA / ELECTRICAL ANALYSIS
+             ================================================= -->
+
+        <!-- =========================================================
+     ELECTRICAL DSA ANALYSIS
+     ========================================================= -->
+
+<section class="dsa-section" id="electricalDsa">
+
+    <!-- DSA HEADER -->
+    <div class="dsa-header">
+
+        <div class="dsa-title-group">
+
+            <div class="dsa-title-icon">
+                <span>⌁</span>
+            </div>
+
+            <div>
+                <h2>ELECTRICAL DSA ANALYSIS</h2>
+                <p>RESISTANCE • THRESHOLD • DECISION ENGINE</p>
+            </div>
+
+        </div>
+
+        <div class="dsa-ready">
+            <span class="dsa-ready-dot"></span>
+            <span id="dsaHeaderStatus">READY</span>
+        </div>
+
+    </div>
+
+
+    <!-- MAIN DSA CONTENT -->
+    <div class="dsa-main-grid">
+
+
+        <!-- LEFT METRICS -->
+        <div class="dsa-metrics">
+
+
+            <!-- THRESHOLD -->
+            <div class="dsa-card">
+
+                <div class="dsa-card-icon">
+                    Ω
+                </div>
+
+                <div class="dsa-card-content">
+
+                    <span class="dsa-card-label">
+                        THRESHOLD
+                    </span>
+
+                    <strong id="dsaThreshold">
+                        --
+                    </strong>
+
+                    <small>
+                        REFERENCE LIMIT
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- READINGS -->
+            <div class="dsa-card">
+
+                <div class="dsa-card-icon readings-icon">
+                    ▤
+                </div>
+
+                <div class="dsa-card-content">
+
+                    <span class="dsa-card-label">
+                        READINGS
+                    </span>
+
+                    <strong id="dsaReadings">
+                        --
+                    </strong>
+
+                    <small>
+                        SAMPLES COLLECTED
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- ABNORMAL -->
+            <div class="dsa-card">
+
+                <div class="dsa-card-icon abnormal-icon">
+                    !
+                </div>
+
+                <div class="dsa-card-content">
+
+                    <span class="dsa-card-label">
+                        ABNORMAL
+                    </span>
+
+                    <strong id="dsaAbnormal">
+                        --
+                    </strong>
+
+                    <small>
+                        OUT OF RANGE
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- DSA DECISION -->
+            <div class="dsa-card decision-card">
+
+                <div class="dsa-card-icon decision-icon">
+                    ◎
+                </div>
+
+                <div class="dsa-card-content">
+
+                    <span class="dsa-card-label">
+                        DSA DECISION
+                    </span>
+
+                    <strong id="dsaDecision">
+                        --
+                    </strong>
+
+                    <small id="dsaDecisionDescription">
+                        WAITING FOR ANALYSIS
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESISTANCE ANALYSIS -->
+        <div class="resistance-display">
+
+            <div class="resistance-bg-grid"></div>
+
+            <div class="resistance-circuit circuit-one"></div>
+            <div class="resistance-circuit circuit-two"></div>
+            <div class="resistance-circuit circuit-three"></div>
+
+
+            <!-- LEFT Ω DISPLAY -->
+            <div class="omega-display">
+
+                <div class="omega-ring ring-one"></div>
+                <div class="omega-ring ring-two"></div>
+                <div class="omega-ring ring-three"></div>
+
+                <div class="omega-symbol">
+                    Ω
+                </div>
+
+            </div>
+
+
+            <!-- RESISTANCE INFORMATION -->
+            <div class="resistance-information">
+
+                <span class="resistance-label">
+                    CURRENT RESISTANCE
+                </span>
+
+                <div class="resistance-number">
+
+                    <span id="dsaResistance">
+                        --
+                    </span>
+
+                    <span class="resistance-unit">
+                        Ω
+                    </span>
+
+                </div>
+
+
+                <div class="resistance-progress">
+
+                    <div
+                        class="resistance-progress-fill"
+                        id="dsaResistanceProgress">
+                    </div>
+
+                </div>
+
+
+                <div class="resistance-percentage">
+
+                    <span id="dsaResistancePercent">
+                        --
+                    </span>
+
+                    <span>
+                        OF THRESHOLD
+                    </span>
+
+                </div>
+
+
+                <div class="resistance-equation">
+
+                    <span>R = V / I</span>
+
+                    <span class="equation-divider">•</span>
+
+                    <span id="dsaEquationValue">
+                        WAITING FOR SENSOR DATA
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANALYSIS STATUS -->
+        <div class="dsa-status-panel">
+
+            <div class="status-panel-header">
+
+                <div class="status-icon">
+                    ∿
+                </div>
+
+                <div>
+
+                    <span>
+                        ANALYSIS STATUS
+                    </span>
+
+                    <strong id="dsaAnalysisStatus">
+                        READY
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-wave"></div>
+
+
+            <div class="analysis-checklist">
+
+
+                <div
+                    class="analysis-step"
+                    id="dsaStepAcquisition"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        DATA ACQUISITION
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="analysis-step"
+                    id="dsaStepSearch"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        LINEAR SEARCH (DSA)
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="analysis-step"
+                    id="dsaStepDecision"
+                >
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <span>
+                        DECISION COMPLETE
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-bottom-line">
+
+                <span class="status-pulse"></span>
+
+                <span id="dsaStatusMessage">
+                    SYSTEM READY
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DSA WORKFLOW -->
+    <div class="dsa-workflow">
+
+        <div class="workflow-start-icon">
+            ∿
+        </div>
+
+
+        <div class="workflow-item">
+            <span>SENSOR INPUT</span>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+
+        <div class="workflow-item">
+            <span>R = V / I</span>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+
+        <div class="workflow-item">
+            <span>ARRAY</span>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+
+        <div class="workflow-item">
+            <span>LINEAR SEARCH</span>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+
+        <div class="workflow-item">
+            <span>THRESHOLD</span>
+        </div>
+
+        <div class="workflow-arrow">→</div>
+
+
+        <div class="workflow-item">
+            <span>DECISION</span>
+        </div>
+
+
+        <div class="workflow-progress">
+
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+
+        <div class="workflow-online">
+
+            <span></span>
+
+            <strong>
+                SYSTEM ONLINE
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+        <!-- =================================================
+             STATISTICS
+             ================================================= -->
+
+        <section class="statistics">
+
+
+            <div class="stat-card">
+
+                <span class="stat-label">
+                    TOTAL INSPECTIONS
+                </span>
+
+
+                <span
+                    class="stat-number"
+                    id="totalInspections"
+                >
+                    --
+                </span>
+
+
+                <span class="stat-trend">
+                    DATABASE RECORD
+                </span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span class="stat-label">
+                    PASSED
+                </span>
+
+
+                <span
+                    class="stat-number pass-number"
+                    id="passedInspections"
+                >
+                    --
+                </span>
+
+
+                <span
+                    class="stat-trend"
+                    id="passRate"
+                >
+                    PASS RATE --
+                </span>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <span class="stat-label">
+                    FAILED
+                </span>
+
+
+                <span
+                    class="stat-number fail-number"
+                    id="failedInspections"
+                >
+                    --
+                </span>
+
+
+                <span class="stat-trend">
+                    REQUIRES REVIEW
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             HISTORY
+             ================================================= -->
+
+        <section class="panel history-panel">
+
+            <div class="panel-header">
+
+                <div class="header-title">
+
+                    <span class="header-icon">
+                        ▤
+                    </span>
+
+                    RECENT INSPECTIONS
+
+                </div>
+
+
+                <span
+                    class="history-count"
+                    id="historyCount"
+                >
+                    NO RECORDS
+                </span>
+
+            </div>
+
+
+            <div class="history-table">
+
+
+                <!-- Table header -->
+
+                <div class="history-row history-heading">
+
+                    <span>
+                        ID
+                    </span>
+
+                    <span>
+                        TIME
+                    </span>
+
+                    <span>
+                        RESISTANCE
+                    </span>
+
+                    <span>
+                        PROBABILITY
+                    </span>
+
+                    <span>
+                        RESULT
+                    </span>
+
+                </div>
+
+
+                <!--
+
+                    JavaScript will populate the actual
+                    database records here.
+
+                    The static fake records have intentionally
+                    been removed.
+
+                -->
+
+                <div
+                    id="historyRows"
+                    class="history-records"
+                >
+
+                    <div class="history-row">
+
+                        <span>
+                            --
+                        </span>
+
+                        <span>
+                            --
+                        </span>
+
+                        <span>
+                            -- Ω
+                        </span>
+
+                        <span>
+                            --%
+                        </span>
+
+                        <span>
+                            WAITING
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer>
+
+            <span>
+                BOARDSY
+            </span>
+
+            &nbsp;•&nbsp;
+
+            PCB DEFECT DETECTION SYSTEM
+
+            &nbsp;•&nbsp;
+
+            <span id="footerYear">
+                © 2026
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script src="scriptt.js"></script>
+
+</body>
+
+</html>
